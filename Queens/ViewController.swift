@@ -43,7 +43,7 @@ class ViewController: UIViewController {
         var genotype = genotype
         for times in 0..<board.count{
             for index in 0..<board[0].count{
-//                let number: Int = Int(arc4random_uniform(8))
+                //                let number: Int = Int(arc4random_uniform(8))
                 var str = String(board[times][index],radix:2)
                 str = pad(string: str, toSize: 3)
                 genotype[times][index] = str

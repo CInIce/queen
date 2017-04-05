@@ -1,15 +1,15 @@
 //
-//  QueenTests.swift
-//  QueenTests
+//  QueensTests.swift
+//  QueensTests
 //
-//  Created by Layon Tavares on 04/04/17.
+//  Created by Layon Tavares on 05/04/17.
 //  Copyright © 2017 br.ufpe.cin. All rights reserved.
 //
 
 import XCTest
-@testable import Queen
+@testable import Queens
 
-class QueenTests: XCTestCase {
+class QueensTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
