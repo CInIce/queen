@@ -43,13 +43,15 @@ class ViewController: UIViewController {
         
         //        print(first.fitness)
         //        var population:[Individual]  = [Individual(fenotype: [0,0,4,5,2,2,0,0]), Individual(fenotype: [1,2,0,4,5,2,7,6]), Individual(fenotype: [1,3,5,2,7,4,6,6])];
-        var population = initPopulation()
-        print(population, terminator:"\n\n")
+        var population: [Individual] = initPopulation(size:1000)
+//        print(population, terminator:"\n\n")
         //        population.sort { $0.fitness < $1.fitness }
         //        print(population, terminator:"\n\n")
         
         var x = 0
-        while(population[99].fitness > 0 && x < 100000){
+        var genX = 1000000000
+        var bestFitness = 1000000000
+        while(population[population.count-1].fitness > 0 && x < 1000){
             var parents = selectParents2(population: population)
             //        print("These are parents: \(parents)", terminator:"\n\n")
             var childs = generateChilds(father1: parents[0], father2: parents[1])
@@ -57,16 +59,36 @@ class ViewController: UIViewController {
             
             population.append(childs[0])
             population.append(childs[1])
+            population.append(childs[2])
+            population.append(childs[3])
             population.sort{ $0.fitness > $1.fitness }
             population.remove(at: 0)
             population.remove(at: 1)
-            
+            population.remove(at: 2)
+            population.remove(at: 3)
+            if(bestFitness > population[population.count-1].fitness){
+                bestFitness = population[population.count-1].fitness
+                genX = x
+            }
             //            print(population)
+            population.shuffle()
+            population.shuffle()
             population.shuffle()
             x += 1
         }
+        
+        
         population.sort{ $0.fitness > $1.fitness }
         print("This is the population: \(population)", terminator:"\n\n")
+        var (report, ocurrences) = countOcurrences(population: population)
+        print("These are the configurations: \(report)")
+        print("These are how many times: \(ocurrences)", terminator:"\n\n")
+
+        var (mean, variation) = meanAndStandardVariation(population: population)
+        print(mean)
+        print(variation)
+        
+        print("This genX is:\(genX) and the best fitness is:\(bestFitness)")
     }
     
     
@@ -75,9 +97,9 @@ class ViewController: UIViewController {
         
     }
     
-    func initPopulation() -> [Individual]{
+    func initPopulation(size: Int) -> [Individual]{
         var population:[Individual] = [Individual]()
-        for times in 0..<100{
+        for times in 0..<size{
             var fenotype: [Int] = [Int]()
             for index in 0..<8{
                 let number: Int = Int(arc4random_uniform(8))
@@ -109,6 +131,42 @@ class ViewController: UIViewController {
     //        return parents
     //    }
     
+    
+    func meanAndStandardVariation(population: [Individual]) -> (Int, Double){
+        var (mean, variation) = (0,0.0)
+        
+        for child in population {
+            mean += child.fitness
+        }
+        mean /= population.count
+        
+        for child in population{
+            let fitness = child.fitness
+            let number = Decimal(fitness-mean)
+            variation += (pow(Double(fitness-mean), 2))
+        }
+        variation /= Double(population.count-1)
+        variation = (sqrt(Double(variation)))
+        return (mean,variation)
+        
+    }
+    
+    func countOcurrences(population:[Individual]) -> ([Individual], [Int]){
+        var report = [Individual]()
+        var ocurrences = [Int]()
+        var index = 0
+        for child in population {
+            
+            if report.contains(where: {$0.genotype == child.genotype}) {
+                index = report.index(where: {$0.genotype == child.genotype})!
+                ocurrences[index] += 1
+            } else {
+                report.append(child)
+                ocurrences.append(1)
+            }
+        }
+        return (report, ocurrences)
+    }
     
     func selectParents2(population:[Individual])-> [Individual]{
         var parents: [Individual] = [Individual]()
@@ -230,7 +288,7 @@ class ViewController: UIViewController {
             genotypeS1.append(String(genotype1[index]))
             genotypeS2.append(String(genotype2[index]))
             var mutationProb: Int = Int(arc4random_uniform(100))
-            if(mutationProb < 40){
+            if(mutationProb < 10){
                 for genoIndex in 0...2{
                     
                     if (genotype1[index][genoIndex] == "0"){
@@ -244,7 +302,7 @@ class ViewController: UIViewController {
                 genotypeS1[index] = (String(genotype1[index]))
             }
             mutationProb = Int(arc4random_uniform(100))
-            if(mutationProb < 40){
+            if(mutationProb < 10){
                 for genoIndex in 0...2{
                     
                     if (genotype2[index][genoIndex] == "0"){
@@ -260,14 +318,14 @@ class ViewController: UIViewController {
         }
         
         childs = [Individual(fenotype: fenotypes[0]), Individual(fenotype: fenotypes[1])]
-        if(mutated1){
-            childs[0].translateToDecimal(genoType: genotypeS1)
-        }
+//        if(mutated1){
+            childs.append(childs[0].translateToDecimal(genoType: genotypeS1))
+//        }
         
-        if(mutated2){
-            childs[1].translateToDecimal(genoType: genotypeS2)
-        }
-        
+//        if(mutated2){
+            childs.append(childs[1].translateToDecimal(genoType: genotypeS2))
+//        }
+        childs.sort { $0.fitness < $1.fitness }
         return childs
         
     }
@@ -292,7 +350,7 @@ class ViewController: UIViewController {
             self.fitness = calcFitness(fenotype:fenotype)
         }
         
-        mutating func translateToDecimal(genoType:[String]){
+        mutating func translateToDecimal(genoType:[String]) -> Individual{
             var fenoType = [Int](repeating:0,count:fenotype.count)
             
             for index in 0..<fenotype.count{
@@ -300,8 +358,8 @@ class ViewController: UIViewController {
                 var num = Int(str,radix:2)
                 fenoType[index] = num!
             }
-            self = Individual(fenotype: fenoType)
-            //            return fenoType
+            var individual = Individual(fenotype: fenoType)
+            return individual
             
         }
         
