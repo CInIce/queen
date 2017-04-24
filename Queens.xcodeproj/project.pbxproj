@@ -14,6 +14,7 @@
 		BC72025A1E951C3300954660 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC7202581E951C3300954660 /* LaunchScreen.storyboard */; };
 		BC7202651E951C3300954660 /* QueensTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC7202641E951C3300954660 /* QueensTests.swift */; };
 		BC7202701E951C3400954660 /* QueensUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC72026F1E951C3400954660 /* QueensUITests.swift */; };
+		BC77194A1EA7CD8B00796E59 /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7719471EA7CD3200796E59 /* Charts.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +32,20 @@
 			remoteGlobalIDString = BC72024B1E951C3300954660;
 			remoteInfo = Queens;
 		};
+		BC7719461EA7CD3200796E59 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BC7719411EA7CD3200796E59 /* Charts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 06165F241D8110E600722320;
+			remoteInfo = Charts;
+		};
+		BC7719481EA7CD3200796E59 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BC7719411EA7CD3200796E59 /* Charts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 06165F2E1D8110E600722320;
+			remoteInfo = ChartsTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +62,7 @@
 		BC72026B1E951C3300954660 /* QueensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = QueensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC72026F1E951C3400954660 /* QueensUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueensUITests.swift; sourceTree = "<group>"; };
 		BC7202711E951C3400954660 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BC7719411EA7CD3200796E59 /* Charts.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Charts.xcodeproj; path = "../../Luciano Augusto/Módulo 1 - After Effects/Charts-master/Charts.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC77194A1EA7CD8B00796E59 /* Charts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +94,7 @@
 		BC7202431E951C3300954660 = {
 			isa = PBXGroup;
 			children = (
+				BC7719411EA7CD3200796E59 /* Charts.xcodeproj */,
 				BC72024E1E951C3300954660 /* Queens */,
 				BC7202631E951C3300954660 /* QueensTests */,
 				BC72026E1E951C3300954660 /* QueensUITests */,
@@ -123,6 +141,15 @@
 				BC7202711E951C3400954660 /* Info.plist */,
 			);
 			path = QueensUITests;
+			sourceTree = "<group>";
+		};
+		BC7719421EA7CD3200796E59 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BC7719471EA7CD3200796E59 /* Charts.framework */,
+				BC7719491EA7CD3200796E59 /* ChartsTests.xctest */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -221,6 +248,12 @@
 			mainGroup = BC7202431E951C3300954660;
 			productRefGroup = BC72024D1E951C3300954660 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = BC7719421EA7CD3200796E59 /* Products */;
+					ProjectRef = BC7719411EA7CD3200796E59 /* Charts.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				BC72024B1E951C3300954660 /* Queens */,
@@ -229,6 +262,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		BC7719471EA7CD3200796E59 /* Charts.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Charts.framework;
+			remoteRef = BC7719461EA7CD3200796E59 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		BC7719491EA7CD3200796E59 /* ChartsTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ChartsTests.xctest;
+			remoteRef = BC7719481EA7CD3200796E59 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		BC72024A1E951C3300954660 /* Resources */ = {
@@ -514,6 +564,7 @@
 				BC7202761E951C3400954660 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BC7202771E951C3400954660 /* Build configuration list for PBXNativeTarget "QueensTests" */ = {
 			isa = XCConfigurationList;
@@ -522,6 +573,7 @@
 				BC7202791E951C3400954660 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BC72027A1E951C3400954660 /* Build configuration list for PBXNativeTarget "QueensUITests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +582,7 @@
 				BC72027C1E951C3400954660 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
