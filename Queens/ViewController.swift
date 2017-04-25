@@ -9,6 +9,7 @@
 import UIKit
 import Charts
 
+
 class ViewController: UIViewController {
     
     @IBOutlet weak var barChartView: BarChartView!
@@ -20,53 +21,83 @@ class ViewController: UIViewController {
         var genX = 1000000000
         var bestFitness = 1000000000
         var bestIndividual: Individual = Individual()
+        var genConvergence = 0
+        var firstConvergence = false
         population.sort{ $0.fitness > $1.fitness }
-        while(population[population.count-1].fitness > 0 && x < 1000){
-            population.shuffle()
-            population.shuffle()
-            population.shuffle()
-            var parents = selectParents2(population: population)
-            var childs = generateChilds(father1: parents[0], father2: parents[1])
-            if(childs.count != 2){
-                population.append(childs[0])
-                population.append(childs[1])
-                population.append(childs[2])
-                population.append(childs[3])
+        if(population[population.count-1].fitness == 0){
+            bestIndividual = population[population.count-1]
+            genX = 0
+            bestFitness = bestIndividual.fitness
+            
+        }else{
+            repeat{
+                population.shuffle()
+                population.shuffle()
+                population.shuffle()
+                var parents: [Individual]
+                var childs: [Individual]
+//                parents = selectParents2(population: population)
+//                childs = generateChilds(father1: parents[0], father2: parents[1])
+                parents = SecondPhase.rouletteWheel(population: population)
+                childs = SecondPhase.generatePMX(parents: parents)
+                childs = SecondPhase.mutate(childs: childs)
+                if(childs.count != 2){
+                    population.append(childs[0])
+                    population.append(childs[1])
+                    population.append(childs[2])
+                    population.append(childs[3])
+                    population.sort{ $0.fitness > $1.fitness }
+                    population.remove(at: 0)
+                    population.remove(at: 1)
+                    population.remove(at: 2)
+                    population.remove(at: 3)
+                    //                print("The best of gen \(x) is: \(population[population.count-1])", terminator: "\n\n")
+                    
+                }else{
+                    population.append(childs[0])
+                    population.append(childs[1])
+                    population.sort{ $0.fitness > $1.fitness }
+                    population.remove(at: 0)
+                    population.remove(at: 1)
+                }
                 population.sort{ $0.fitness > $1.fitness }
-                population.remove(at: 0)
-                population.remove(at: 1)
-                population.remove(at: 2)
-                population.remove(at: 3)
-//                print("The best of gen \(x) is: \(population[population.count-1])", terminator: "\n\n")
                 if(bestFitness > population[population.count-1].fitness){
                     bestIndividual = population[population.count-1]
                     bestFitness = population[population.count-1].fitness
                     genX = x
                 }
+                
+                var (report, ocurrences) = countOcurrences(population: population)
+                print("These are the configurations: \(report)\n")
+                print("These are how many times: \(ocurrences)", terminator:"\n\n")
+                var fitnessTable: [Int] = []
+                for child in report{
+                    fitnessTable.append(child.fitness)
+                }
+                print("These are their fitness: \(fitnessTable)", terminator:"\n\n")
+                var (mean, variation) = meanAndStandardVariation(population: population)
+                print("The mean is: \(mean)")
+                print("The variation is: \(variation)")
+                if(ocurrences.count < 10 && !firstConvergence){
+                    genConvergence = x
+                    firstConvergence = true
+                }
+
                 x += 1
-            }
-            population.sort{ $0.fitness > $1.fitness }
+            }while(population[population.count-1].fitness > 0 && x < 1000)
         }
         
-        
-        
-//        print("This is the population: \(population)", terminator:"\n\n")
+        //        print("This is the population: \(population)", terminator:"\n\n")
         print("\n\n")
-        var (report, ocurrences) = countOcurrences(population: population)
-        print("These are the configurations: \(report)")
-        print("These are how many times: \(ocurrences)", terminator:"\n\n")
-        
-        var (mean, variation) = meanAndStandardVariation(population: population)
-        print("The mean is: \(mean)")
-        print("The variation is: \(variation)")
-        print("This genX is: \(genX)")
+                print("This genX is: \(genX)")
         print("The best fitness is: \(bestFitness)")
         print("Best individual is: \(bestIndividual)")
+        print("The first time the diversity trop 10 was in generation: \(genConvergence)")
         //        let formato:BarChartFormatter = BarChartFormatter()
         //        let xaxis:XAxis = XAxis()
         //        barChartView.xAxis.valueFormatter = IndexAxisValueFormatter(values: report)
         
-        setChart(dataPoints: report, values: ocurrences)
+//        setChart(dataPoints: report, values: ocurrences)
     }
     
     func setChart(dataPoints:[Individual], values:[Int]){
@@ -101,13 +132,17 @@ class ViewController: UIViewController {
     
     func initPopulation(size: Int) -> [Individual]{
         var population:[Individual] = [Individual]()
+        var numbers:[Int] = [0,1,2,3,4,5,6,7]
         for times in 0..<size{
-            var fenotype: [Int] = [Int]()
-            for index in 0..<8{
-                let number: Int = Int(arc4random_uniform(8))
-                fenotype.append(number)
-            }
-            population.append(Individual(fenotype: fenotype))
+            //            var fenotype: [Int] = [Int]()
+            //            fenotype.append(Int)
+            //            for index in 0..<8{
+            //                let number: Int = Int(arc4random_uniform(8))
+            //                fenotype.append(number)
+            //            }
+            numbers.shuffle()
+            //            let index: Int = Int(arc4random_uniform(permutation.count))
+            population.append(Individual(fenotype: numbers))
             //            print(board[times]);
         }
         return population
@@ -157,75 +192,6 @@ class ViewController: UIViewController {
         }
         parents.sort { $0.fitness > $1.fitness }
         return [parents[3], parents[4]]
-    }
-    
-    func calculateFitness(individual:[Int]) -> Int{
-        var value = 0;
-        for index in individual {
-            value += individual[index]
-        }
-        return value
-    }
-    
-    
-    func board() -> [[Int]]{
-        var board = [[Int]](repeating: [Int] (repeating: 0,count:8), count:8)
-
-        var number = 0
-        for column in 0..<board.count{
-            for row in 0..<board[0].count{
-                board[column][row] = number
-                number += 1
-            }
-            
-        }
-        return board
-    }
-    
-    
-    func countHits(child:[Int], hits:[Int]) -> [Int]{
-        var hits = hits
-        for index1 in 0..<child.count{
-            var secondIndex = (index1+1)%8
-            var x: Int = 0
-            while(x < 8){
-                if(child[index1] == child[secondIndex] && (index1 != secondIndex)){
-                    hits[index1] += 1
-                }
-                secondIndex = (secondIndex+1)%8
-                x += 1
-            }
-        }
-        return hits
-    }
-    
-    
-    func countHitsDiagonal(child:[Int], hits:[Int]) ->[Int]{
-        var hits = hits
-        for index1 in 0..<child.count{
-            var secondIndex = (index1+1)%8
-            var x: Int = 0
-            while(x < 8){
-                if(abs(child[index1]-child[secondIndex]) == abs(index1-secondIndex) && (index1 != secondIndex)){
-                    hits[index1] += 1
-                }
-                secondIndex = (secondIndex+1)%8
-                x += 1
-            }
-        }
-        return hits
-    }
-    
-    
-    func checkHits (child:[Int]){
-        var hits: Int = 0;
-        for index in 0..<child.count-1{
-            _ = (child[index+1])
-            _ = index+1
-            if( (child[index] - index) == (child[index+1]-(index+1))){
-                hits += 1
-            }
-        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -427,4 +393,3 @@ extension MutableCollection where Indices.Iterator.Element == Index {
         }
     }
 }
-
